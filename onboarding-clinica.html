@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onboarding Clínica — GDS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:      #6a9785;
+      --green-h:    #7aaa96;
+      --dark:       #313842;
+      --card:       #3a4251;
+      --card-h:     #424f62;
+      --text:       #f0f2f5;
+      --muted:      #8fa0b0;
+      --error:      #ff6b6b;
+      --r:          12px;
+      --ease:       cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ─────────────────────────────── */
+    .hdr {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 200;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background: rgba(49,56,66,.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+
+    .hdr-logo { height: 26px; width: auto; display: block; }
+
+    .hdr-brand {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--green-h);
+      letter-spacing: .3px;
+    }
+
+    .intro-brand {
+      font-size: clamp(20px, 5vw, 28px);
+      font-weight: 700;
+      color: var(--green-h);
+      letter-spacing: .3px;
+      margin-bottom: 28px;
+    }
+
+    .hdr-count {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      opacity: 1;
+      transition: opacity .3s;
+    }
+    .hdr-count.hide { opacity: 0; pointer-events: none; }
+
+    /* ── PROGRESS ────────────────────────────── */
+    .prog-track {
+      position: fixed;
+      top: 56px; left: 0; right: 0;
+      z-index: 199;
+      height: 3px;
+      background: rgba(255,255,255,.07);
+    }
+    .prog-fill {
+      height: 100%;
+      background: var(--green);
+      transition: width .55s var(--ease);
+      width: 0;
+    }
+
+    /* ── SCREENS ─────────────────────────────── */
+    .scr {
+      position: fixed;
+      inset: 59px 0 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 20px 52px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .scr.on { opacity: 1; pointer-events: all; }
+
+    /* Enter/exit animations */
+    .scr.in-fwd  { animation: inFwd  .38s var(--ease) forwards; }
+    .scr.in-bwd  { animation: inBwd  .38s var(--ease) forwards; }
+    .scr.out-fwd { animation: outFwd .26s var(--ease) forwards; }
+    .scr.out-bwd { animation: outBwd .26s var(--ease) forwards; }
+
+    @keyframes inFwd  { from{opacity:0;transform:translateY(28px)}  to{opacity:1;transform:translateY(0)} }
+    @keyframes inBwd  { from{opacity:0;transform:translateY(-28px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes outFwd { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(-28px)} }
+    @keyframes outBwd { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(28px)}  }
+
+    /* ── INTRO ───────────────────────────────── */
+    .intro-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 520px;
+      width: 100%;
+    }
+    .intro-logo   { width: 140px; max-width: 58vw; margin-bottom: 32px; }
+    .intro-title  { font-size: clamp(22px,5vw,34px); font-weight: 700; line-height: 1.2; margin-bottom: 14px; }
+    .intro-desc   { font-size: clamp(14px,3vw,16px); color: var(--muted); line-height: 1.65; margin-bottom: 24px; }
+    .time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid rgba(106,151,133,.4);
+      background: rgba(106,151,133,.1);
+      color: var(--green-h);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 38px;
+    }
+
+    /* ── QUESTION LAYOUT ─────────────────────── */
+    .q-box { width: 100%; max-width: 580px; }
+
+    .q-sec {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+    .q-title {
+      font-size: clamp(17px,4vw,24px);
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 20px;
+    }
+    .q-sub {
+      display: block;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .q-hint {
+      display: flex;
+      gap: 7px;
+      align-items: flex-start;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: -10px;
+      margin-bottom: 18px;
+    }
+    .q-hint::before { content: '💡'; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── INPUTS ──────────────────────────────── */
+    input.fi, textarea.fi {
+      width: 100%;
+      background: var(--card);
+      border: 2px solid transparent;
+      border-radius: var(--r);
+      padding: 15px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      color: var(--text);
+      outline: none;
+      transition: border-color .22s, background .22s;
+      -webkit-appearance: none;
+      caret-color: var(--green);
+    }
+    input.fi::placeholder, textarea.fi::placeholder { color: rgba(143,160,176,.38); }
+    input.fi:focus, textarea.fi:focus { border-color: var(--green); background: var(--card-h); }
+    input.fi.err, textarea.fi.err { border-color: var(--error); }
+    textarea.fi { min-height: 112px; resize: vertical; line-height: 1.6; }
+
+    .err-msg { color: var(--error); font-size: 12.5px; margin-top: 7px; display: none; }
+    .err-msg.show { display: block; }
+
+    /* ── CHOICES ─────────────────────────────── */
+    .choices { display: flex; flex-direction: column; gap: 9px; }
+
+    .choice {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--card);
+      border: 2px solid transparent;
+      border-radius: var(--r);
+      padding: 13px 16px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      text-align: left;
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14.5px;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .choice:hover  { border-color: rgba(106,151,133,.45); background: var(--card-h); }
+    .choice.sel    { border-color: var(--green); background: rgba(106,151,133,.1); }
+
+    .ck {
+      min-width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: rgba(255,255,255,.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--muted);
+      transition: background .2s, color .2s;
+      flex-shrink: 0;
+    }
+    .choice.sel .ck { background: var(--green); color: #fff; }
+
+    /* ── BUTTONS ─────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 13px 26px;
+      border-radius: 999px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background .2s, transform .15s, border-color .2s, color .2s, opacity .2s;
+      white-space: nowrap;
+    }
+    .btn-pri { background: var(--green); color: #fff; }
+    .btn-pri:hover  { background: var(--green-h); }
+    .btn-pri:active { transform: scale(.97); }
+    .btn-sec { background: transparent; color: var(--muted); border: 2px solid rgba(255,255,255,.1); }
+    .btn-sec:hover  { border-color: rgba(255,255,255,.22); color: var(--text); }
+
+    /* ── NAV ROW ─────────────────────────────── */
+    .nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      gap: 10px;
+    }
+    .enter-hint {
+      font-size: 11.5px;
+      color: rgba(143,160,176,.38);
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    /* ── SUCCESS ─────────────────────────────── */
+    .done-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 400px;
+    }
+    .check-ring {
+      width: 76px; height: 76px;
+      border-radius: 50%;
+      border: 2.5px solid var(--green);
+      background: rgba(106,151,133,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 26px;
+    }
+    .done-title { font-size: 40px; font-weight: 700; margin-bottom: 14px; }
+    .done-text  { font-size: 15px; color: var(--muted); line-height: 1.68; }
+
+    /* ── RESPONSIVE ──────────────────────────── */
+    @media (max-width: 420px) {
+      .scr  { padding: 20px 16px 44px; }
+      .btn  { padding: 12px 20px; font-size: 14px; }
+      .intro-logo { width: 110px; }
+    }
+
+    /* Safe area for iOS notch */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      .scr { padding-bottom: calc(44px + env(safe-area-inset-bottom)); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════ HEADER ════ -->
+<header class="hdr">
+  <span class="hdr-brand">Growth Dental Systems</span>
+  <span class="hdr-count hide" id="count">1 / 22</span>
+</header>
+
+<!-- ════ PROGRESS BAR ════ -->
+<div class="prog-track"><div class="prog-fill" id="prog"></div></div>
+
+<!-- ════ INTRO ════ -->
+<section class="scr on" id="scr-intro">
+  <div class="intro-box">
+    <span class="intro-brand">Growth Dental Systems</span>
+    <h1 class="intro-title">Bienvenido al onboarding<br>de tu clínica</h1>
+    <p class="intro-desc">Necesitamos conocer algunos datos de tu clínica para crear los mejores anuncios posibles. Solo toma 5 minutos y lo llenas una sola vez.</p>
+    <div class="time-badge">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      5 minutos
+    </div>
+    <button class="btn btn-pri" id="btnStart">
+      Empezar
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </button>
+  </div>
+</section>
+
+<!-- ════ QUESTION SCREENS (generated by JS) ════ -->
+<div id="qRoot"></div>
+
+<!-- ════ SUCCESS ════ -->
+<section class="scr" id="scr-done">
+  <div class="done-box">
+    <div class="check-ring">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#6a9785" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <h2 class="done-title">¡Listo!</h2>
+    <p class="done-text">Tus respuestas se enviaron correctamente. Con esta información vamos a crear los mejores anuncios para tu clínica.</p>
+  </div>
+</section>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONFIGURACIÓN — cambia el número de WhatsApp aquí
+   ═══════════════════════════════════════════════════════════ */
+const WA_NUMBER = '59898891886';
+const LOGO_SRC  = 'Captura de pantalla 2024-09-03 a la(s) 13.33.07.png';
+
+/* ═══════════════════════════════════════════════════════════
+   PREGUNTAS
+   ═══════════════════════════════════════════════════════════ */
+const QS = [
+  // ── Datos del contacto ────────────────────────────────
+  {
+    sec: 'Datos del contacto',
+    label: 'Nombre',
+    type: 'text', ph: 'Ej: Carlos',
+    ac: 'given-name'
+  },
+  {
+    sec: 'Datos del contacto',
+    label: 'Apellido',
+    type: 'text', ph: 'Ej: Méndez',
+    ac: 'family-name'
+  },
+  {
+    sec: 'Datos del contacto',
+    label: 'Teléfono',
+    type: 'tel', ph: 'Ej: +52 1 984 123 4567',
+    ac: 'tel'
+  },
+  {
+    sec: 'Datos del contacto',
+    label: 'Correo electrónico',
+    type: 'email', ph: 'Ej: doctor@clinica.com',
+    ac: 'email'
+  },
+
+  // ── Datos de la clínica ───────────────────────────────
+  {
+    sec: 'Datos de la clínica',
+    label: 'Nombre de la clínica / consultorio',
+    type: 'text', ph: 'Ej: Clínica Demprax',
+    ac: 'organization'
+  },
+  {
+    sec: 'Datos de la clínica',
+    label: 'Ciudad',
+    type: 'text', ph: 'Ej: Playa del Carmen',
+    ac: 'address-level2'
+  },
+  {
+    sec: 'Datos de la clínica',
+    label: 'Región / Provincia / Estado',
+    type: 'text', ph: 'Ej: Quintana Roo',
+    ac: 'address-level1'
+  },
+  {
+    sec: 'Datos de la clínica',
+    label: 'País',
+    type: 'text', ph: 'Ej: México',
+    ac: 'country-name'
+  },
+  {
+    sec: 'Datos de la clínica',
+    label: 'Número de teléfono de la clínica al que notificar',
+    sub: 'Distinto al personal',
+    type: 'tel', ph: 'Ej: +52 1 984 000 0000',
+    ac: 'off'
+  },
+  {
+    sec: 'Datos de la clínica',
+    label: '¿Cuántas unidades tienes trabajando? (sillones)',
+    type: 'text', ph: 'Ej: 3',
+    ac: 'off'
+  },
+  {
+    sec: 'Datos de la clínica',
+    label: 'Zona horaria',
+    type: 'text', ph: 'Ej: GMT-06',
+    hint: 'Puedes buscarlo en Google si no lo sabes',
+    ac: 'off'
+  },
+
+  // ── Información para anuncios ─────────────────────────
+  {
+    sec: 'Información para anuncios',
+    label: 'Nombre del doctor que graba los videos',
+    type: 'text', ph: 'Ej: Dr. Carlos Méndez',
+    hint: 'Si hay más de uno, ponelos separados por coma',
+    ac: 'off'
+  },
+  {
+    sec: 'Información para anuncios',
+    label: 'Años de experiencia de la clínica o del doctor principal',
+    type: 'text', ph: 'Ej: 15 años',
+    ac: 'off'
+  },
+  {
+    sec: 'Información para anuncios',
+    label: '¿Qué tratamientos ofrecen?',
+    type: 'textarea',
+    ph: 'Ej: Ortodoncia, implantes, diseño de sonrisa, limpieza, blanqueamiento, endodoncia...'
+  },
+  {
+    sec: 'Información para anuncios',
+    label: '¿Qué tecnología o equipos destacables tienen?',
+    type: 'textarea',
+    ph: 'Ej: Escáner intraoral 3D, radiografía panorámica digital...',
+    hint: "Si no tienen nada especial, escribí 'ninguno'"
+  },
+  {
+    sec: 'Información para anuncios',
+    label: '¿Tienen alguna especialización, certificación o reconocimiento importante?',
+    type: 'textarea',
+    ph: 'Ej: Posgrado en implantología en la UNAM, miembro de la ADA...',
+    hint: "Si no, escribí 'no'"
+  },
+  {
+    sec: 'Información para anuncios',
+    label: '¿Cuántos pacientes han atendido aproximadamente?',
+    type: 'text', ph: 'Ej: Más de 500 pacientes',
+    hint: 'Un estimado general. Lo usamos para comunicar autoridad en los anuncios',
+    ac: 'off'
+  },
+  {
+    sec: 'Información para anuncios',
+    label: '¿Tienen casos de éxito documentados con nombre de paciente que se puedan mencionar?',
+    type: 'textarea',
+    ph: 'Ej: Patricio - prótesis removible, recuperó masticación. Jorge - diseño de sonrisa en porcelana...'
+  },
+  {
+    sec: 'Información para anuncios',
+    label: '¿Tienen reseñas destacadas en Google o redes sociales?',
+    type: 'textarea',
+    ph: 'Ej: 4.9 estrellas en Google con 230 reseñas...'
+  },
+  {
+    sec: 'Información para anuncios',
+    label: '¿Manejan planes de financiamiento o pagos a meses?',
+    type: 'choice',
+    opts: [
+      { k: 'A', t: 'Sí, meses sin intereses' },
+      { k: 'B', t: 'Sí, pagos a plazos directo con la clínica' },
+      { k: 'C', t: 'No, el pago es de contado' },
+      { k: 'D', t: 'Otro' }
+    ]
+  },
+  {
+    sec: 'Información para anuncios',
+    label: '¿Su oferta de entrada estándar es consulta gratuita o manejan otra cosa?',
+    type: 'choice',
+    hint: 'Esto es lo que usamos como gancho para que la persona agende',
+    opts: [
+      { k: 'A', t: 'Consulta de diagnóstico gratuita' },
+      { k: 'B', t: 'Consulta con precio especial/descuento' },
+      { k: 'C', t: 'Promoción directa con precio' },
+      { k: 'D', t: 'Otra cosa' }
+    ]
+  },
+  {
+    sec: 'Información para anuncios',
+    label: '¿El doctor tiene alguna muletilla o forma de hablar particular?',
+    type: 'textarea',
+    ph: "Ej: Habla muy formal, usa mucho 'verdad' al final de las frases...",
+    hint: "Si no hay nada especial, escribí 'no'"
+  }
+];
+
+const TOTAL   = QS.length; // 22
+const answers = new Array(TOTAL).fill(null);
+
+/* ═══════════════════════════════════════════════════════════
+   BUILD QUESTION SCREENS
+   ═══════════════════════════════════════════════════════════ */
+const qRoot = document.getElementById('qRoot');
+
+QS.forEach((q, i) => {
+  const isLast = i === TOTAL - 1;
+  const el = document.createElement('section');
+  el.className = 'scr';
+  el.id = `scr-q${i}`;
+
+  let inputHTML = '';
+
+  if (q.type === 'choice') {
+    inputHTML = `<div class="choices" id="ch${i}">` +
+      q.opts.map(o =>
+        `<button type="button" class="choice" data-key="${o.k}" data-text="${o.t.replace(/"/g,'&quot;')}" onclick="pick(${i},this)">
+           <span class="ck">${o.k}</span>
+           <span>${o.t}</span>
+         </button>`
+      ).join('') +
+    `</div>`;
+  } else if (q.type === 'textarea') {
+    inputHTML = `<textarea class="fi" id="fi${i}" placeholder="${q.ph}" rows="4"></textarea>`;
+  } else {
+    inputHTML = `<input class="fi" id="fi${i}" type="${q.type}"
+      placeholder="${q.ph}"
+      autocomplete="${q.ac || 'off'}"
+      autocorrect="off" spellcheck="false">`;
+  }
+
+  el.innerHTML = `
+    <div class="q-box">
+      <div class="q-sec">${q.sec}</div>
+      <h2 class="q-title">${q.label}${q.sub ? `<span class="q-sub">${q.sub}</span>` : ''}</h2>
+      ${q.hint ? `<p class="q-hint">${q.hint}</p>` : ''}
+      ${inputHTML}
+      <div class="err-msg" id="err${i}">Este campo es obligatorio.</div>
+      <div class="nav-row">
+        <button type="button" class="btn btn-sec" onclick="goBack()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+          </svg>
+          Atrás
+        </button>
+        <button type="button" class="btn btn-pri" onclick="goNext()">
+          ${isLast
+            ? `Enviar respuestas
+               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                 <line x1="22" y1="2" x2="11" y2="13"/>
+                 <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+               </svg>`
+            : `Siguiente
+               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                 <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+               </svg>`
+          }
+        </button>
+      </div>
+      ${q.type !== 'textarea' && q.type !== 'choice'
+        ? '<p class="enter-hint">Presiona Enter ↵</p>'
+        : ''}
+    </div>`;
+
+  qRoot.appendChild(el);
+});
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════════ */
+let cur  = -1;     // -1=intro  0..TOTAL-1=questions  TOTAL=done
+let busy = false;
+
+function scrEl(idx) {
+  if (idx === -1)    return document.getElementById('scr-intro');
+  if (idx === TOTAL) return document.getElementById('scr-done');
+  return document.getElementById(`scr-q${idx}`);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TRANSITION
+   ═══════════════════════════════════════════════════════════ */
+function go(to, fwd) {
+  if (busy) return;
+  busy = true;
+
+  const fromEl = scrEl(cur);
+  const toEl   = scrEl(to);
+
+  // Exit current screen
+  if (fromEl) {
+    fromEl.classList.remove('on', 'in-fwd', 'in-bwd');
+    fromEl.classList.add(fwd ? 'out-fwd' : 'out-bwd');
+    fromEl.addEventListener('animationend', () => {
+      fromEl.classList.remove('out-fwd', 'out-bwd');
+    }, { once: true });
+  }
+
+  // Restore state for destination screen
+  if (to >= 0 && to < TOTAL) {
+    const q  = QS[to];
+    const fi = document.getElementById(`fi${to}`);
+    if (q.type !== 'choice') {
+      if (fi && answers[to] !== null) fi.value = answers[to];
+    } else {
+      // restore selected choice visual
+      const saved = answers[to];
+      document.querySelectorAll(`#ch${to} .choice`).forEach(b => {
+        const opt = QS[to].opts.find(o => o.k === b.dataset.key);
+        b.classList.toggle('sel', saved === `${b.dataset.key}) ${opt?.t}`);
+      });
+    }
+    clearErr(to);
+  }
+
+  // Enter new screen after short overlap
+  setTimeout(() => {
+    cur = to;
+    updateHUD();
+
+    toEl.classList.remove('out-fwd', 'out-bwd', 'in-fwd', 'in-bwd');
+    toEl.classList.add('on', fwd ? 'in-fwd' : 'in-bwd');
+    toEl.addEventListener('animationend', () => {
+      toEl.classList.remove('in-fwd', 'in-bwd');
+      // auto-focus input
+      if (cur >= 0 && cur < TOTAL) {
+        const fi = document.getElementById(`fi${cur}`);
+        if (fi) fi.focus();
+      }
+      busy = false;
+    }, { once: true });
+  }, 140);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HUD
+   ═══════════════════════════════════════════════════════════ */
+function updateHUD() {
+  const countEl = document.getElementById('count');
+  const progEl  = document.getElementById('prog');
+  if (cur < 0 || cur >= TOTAL) {
+    countEl.classList.add('hide');
+    progEl.style.width = cur >= TOTAL ? '100%' : '0%';
+  } else {
+    countEl.classList.remove('hide');
+    countEl.textContent = `${cur + 1} / ${TOTAL}`;
+    progEl.style.width = `${((cur + 1) / TOTAL) * 100}%`;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VALIDATION
+   ═══════════════════════════════════════════════════════════ */
+function clearErr(idx) {
+  document.getElementById(`err${idx}`)?.classList.remove('show');
+  document.getElementById(`fi${idx}`)?.classList.remove('err');
+}
+
+function validate(idx) {
+  const val   = answers[idx];
+  const empty = val === null || (typeof val === 'string' && !val.trim());
+  const errEl = document.getElementById(`err${idx}`);
+  const fiEl  = document.getElementById(`fi${idx}`);
+  if (empty) {
+    errEl?.classList.add('show');
+    fiEl?.classList.add('err');
+    fiEl?.focus();
+    return false;
+  }
+  errEl?.classList.remove('show');
+  fiEl?.classList.remove('err');
+  return true;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SYNC CURRENT INPUT → ANSWERS
+   ═══════════════════════════════════════════════════════════ */
+function syncInput() {
+  if (cur < 0 || cur >= TOTAL) return;
+  const q  = QS[cur];
+  if (q.type !== 'choice') {
+    const fi = document.getElementById(`fi${cur}`);
+    if (fi) answers[cur] = fi.value;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ACTIONS
+   ═══════════════════════════════════════════════════════════ */
+function startForm() { go(0, true); }
+
+function goNext() {
+  if (cur === -1) { startForm(); return; }
+  syncInput();
+  if (!validate(cur)) return;
+  if (cur === TOTAL - 1) { sendWA(); }
+  else { go(cur + 1, true); }
+}
+
+function goBack() {
+  syncInput();
+  if (cur <= 0) go(-1, false);
+  else go(cur - 1, false);
+}
+
+function pick(idx, btn) {
+  const key  = btn.dataset.key;
+  const text = btn.dataset.text;
+  answers[idx] = `${key}) ${text}`;
+  document.querySelectorAll(`#ch${idx} .choice`).forEach(b => {
+    b.classList.toggle('sel', b.dataset.key === key);
+  });
+  clearErr(idx);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   WHATSAPP SEND
+   ═══════════════════════════════════════════════════════════ */
+function sendWA() {
+  const a = answers;
+  const msg = [
+    '🦷 *ONBOARDING CLÍNICA — GDS*',
+    '',
+    '*📋 DATOS DEL CONTACTO*',
+    `• *Nombre:* ${a[0] || '—'}`,
+    `• *Apellido:* ${a[1] || '—'}`,
+    `• *Teléfono personal:* ${a[2] || '—'}`,
+    `• *Correo:* ${a[3] || '—'}`,
+    '',
+    '*🏥 DATOS DE LA CLÍNICA*',
+    `• *Clínica:* ${a[4] || '—'}`,
+    `• *Ciudad:* ${a[5] || '—'}`,
+    `• *Estado / Región:* ${a[6] || '—'}`,
+    `• *País:* ${a[7] || '—'}`,
+    `• *Teléfono clínica:* ${a[8] || '—'}`,
+    `• *Sillones:* ${a[9] || '—'}`,
+    `• *Zona horaria:* ${a[10] || '—'}`,
+    '',
+    '*📣 INFORMACIÓN PARA ANUNCIOS*',
+    `• *Doctor(es):* ${a[11] || '—'}`,
+    `• *Años de experiencia:* ${a[12] || '—'}`,
+    `• *Tratamientos:* ${a[13] || '—'}`,
+    `• *Tecnología / equipos:* ${a[14] || '—'}`,
+    `• *Especializaciones:* ${a[15] || '—'}`,
+    `• *Pacientes atendidos:* ${a[16] || '—'}`,
+    `• *Casos de éxito:* ${a[17] || '—'}`,
+    `• *Reseñas:* ${a[18] || '—'}`,
+    `• *Financiamiento:* ${a[19] || '—'}`,
+    `• *Oferta de entrada:* ${a[20] || '—'}`,
+    `• *Muletilla del doctor:* ${a[21] || '—'}`,
+  ].join('\n');
+
+  window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+  go(TOTAL, true);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   KEYBOARD NAVIGATION
+   ═══════════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  // Intro
+  if (cur === -1) {
+    if (e.key === 'Enter') { e.preventDefault(); startForm(); }
+    return;
+  }
+  // Done screen
+  if (cur >= TOTAL) return;
+
+  const q = QS[cur];
+
+  // Enter → next (except textarea)
+  if (e.key === 'Enter' && q.type !== 'textarea') {
+    e.preventDefault();
+    goNext();
+    return;
+  }
+
+  // Letter shortcuts for choice questions
+  if (q.type === 'choice') {
+    const k = e.key.toUpperCase();
+    const btn = document.querySelector(`#ch${cur} .choice[data-key="${k}"]`);
+    if (btn) pick(cur, btn);
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════ */
+document.getElementById('btnStart').addEventListener('click', startForm);
+updateHUD();
+</script>
+</body>
+</html>
