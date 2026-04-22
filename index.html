@@ -441,6 +441,28 @@ const QS = [
     ac: 'off'
   },
 
+  {
+    sec: 'Datos de la clínica',
+    label: 'Días y horarios de atención',
+    type: 'textarea',
+    ph: 'Ej: Lunes a viernes de 9:00 a 19:00, sábados de 9:00 a 14:00'
+  },
+  {
+    sec: 'Datos de la clínica',
+    label: 'Dirección de la clínica',
+    type: 'textarea',
+    ph: 'Ej: Av. Constituyentes 123, Col. Centro. Referencia: frente al parque municipal',
+    ac: 'off'
+  },
+  {
+    sec: 'Datos de la clínica',
+    label: 'Link de ubicación en Google Maps',
+    type: 'text',
+    ph: 'Ej: https://maps.app.goo.gl/...',
+    hint: 'Abrí Google Maps, buscá tu clínica, tocá "Compartir" y copiá el link',
+    ac: 'off'
+  },
+
   // ── Información para anuncios ─────────────────────────
   {
     sec: 'Información para anuncios',
@@ -766,19 +788,22 @@ function sendWA() {
     `• *Teléfono clínica:* ${a[8] || '—'}`,
     `• *Sillones:* ${a[9] || '—'}`,
     `• *Zona horaria:* ${a[10] || '—'}`,
+    `• *Horarios de atención:* ${a[11] || '—'}`,
+    `• *Dirección:* ${a[12] || '—'}`,
+    `• *Google Maps:* ${a[13] || '—'}`,
     '',
     '*📣 INFORMACIÓN PARA ANUNCIOS*',
-    `• *Doctor(es):* ${a[11] || '—'}`,
-    `• *Años de experiencia:* ${a[12] || '—'}`,
-    `• *Tratamientos:* ${a[13] || '—'}`,
-    `• *Tecnología / equipos:* ${a[14] || '—'}`,
-    `• *Especializaciones:* ${a[15] || '—'}`,
-    `• *Pacientes atendidos:* ${a[16] || '—'}`,
-    `• *Casos de éxito:* ${a[17] || '—'}`,
-    `• *Reseñas:* ${a[18] || '—'}`,
-    `• *Financiamiento:* ${a[19] || '—'}`,
-    `• *Oferta de entrada:* ${a[20] || '—'}`,
-    `• *Muletilla del doctor:* ${a[21] || '—'}`,
+    `• *Doctor(es):* ${a[14] || '—'}`,
+    `• *Años de experiencia:* ${a[15] || '—'}`,
+    `• *Tratamientos:* ${a[16] || '—'}`,
+    `• *Tecnología / equipos:* ${a[17] || '—'}`,
+    `• *Especializaciones:* ${a[18] || '—'}`,
+    `• *Pacientes atendidos:* ${a[19] || '—'}`,
+    `• *Casos de éxito:* ${a[20] || '—'}`,
+    `• *Reseñas:* ${a[21] || '—'}`,
+    `• *Financiamiento:* ${a[22] || '—'}`,
+    `• *Oferta de entrada:* ${a[23] || '—'}`,
+    `• *Muletilla del doctor:* ${a[24] || '—'}`,
   ].join('\n');
 
   window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
